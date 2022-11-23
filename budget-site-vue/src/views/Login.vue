@@ -57,6 +57,7 @@
 </template>
 
 <script>
+
 import authService from "../services/AuthService";
 
 export default {
@@ -72,7 +73,7 @@ export default {
     };
   },
   methods: {
-    login() {
+    async login() {
       authService
         .login(this.user)
         .then((response) => {
@@ -89,9 +90,6 @@ export default {
           }
         });
     },
-    resetAuth() {
-      
-    }
   },
 };
 </script>

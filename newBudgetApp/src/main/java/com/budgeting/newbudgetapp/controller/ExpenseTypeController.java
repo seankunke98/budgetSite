@@ -22,7 +22,6 @@ import java.util.List;
 @PreAuthorize("isAuthenticated()")
 @RestController
 public class ExpenseTypeController {
-
     private final ExpenseDao expenseDao;
     private UserDao userDao;
     private ExpenseTypeDao expenseTypeDao;
@@ -43,7 +42,6 @@ public class ExpenseTypeController {
         if(actualUserId == userDao.findIdByUsername(principal.getName())) {
             expenseTypeTotals = jdbcExpenseTypeDao.totalExpensesEachType(actualUserId);
         }
-        System.out.println(expenseTypeTotals.toString());
         return expenseTypeTotals;
     }
 
@@ -78,12 +76,13 @@ public class ExpenseTypeController {
         List<ExpenseType> expenseTypeTotals = jdbcExpenseTypeDao.totalExpensesEachType(actualUserId);
         if(actualUserId == userDao.findIdByUsername(principal.getName())) {
             for(ExpenseType current : expenseTypeTotals) {
-                names.add(current.getTypeName());
+                names.add(current.getExpenseTypeName());
             }
             Collections.sort(names);
         }
         return names;
     }
+
 
 
 }

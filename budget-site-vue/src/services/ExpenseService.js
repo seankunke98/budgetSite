@@ -14,6 +14,9 @@ export default {
     deleteExpensesById(expenseId) {
         return axios.delete(`/expenses/deleteExpenses/${expenseId}`)
     },
+    deleteMultipleExpenses(selectedIds) {
+        return axios.delete(`/expenses/deleteExpenses/deleteMultipleExpenses`, selectedIds)
+    },
     editExpense(expense) {
         return axios.put(`/expenses/editExpense`, expense)
     },
@@ -43,6 +46,9 @@ export default {
     },
     getFullYearTotalsWithMonth() {
         return axios.get(`/expenses/expensesFullYearWithMonth`)
+    },
+    commitExpenseChanges(tableExpenses) {
+        return axios.post(`/expenses/addAllExpenses`, tableExpenses)
     }
 
 

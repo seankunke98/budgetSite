@@ -5,39 +5,39 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = TotalExpenseFilter.class)
 public class ExpenseType {
 
-    private int typeId;
-    private String typeName;
+    private int expenseTypeId;
+    private String expenseTypeName;
 
     private double totalExpenses;
 
-    public ExpenseType(int typeId, String typeName) {
-        this.typeId = typeId;
-        this.typeName = typeName;
+    public ExpenseType(int expenseTypeId, String expenseTypeName) {
+        this.expenseTypeId = expenseTypeId;
+        this.expenseTypeName = expenseTypeName;
     }
 
-    public ExpenseType(int typeId, String typeName, double totalExpenses) {
-        this.typeId = typeId;
-        this.typeName = typeName;
+    public ExpenseType(int expenseTypeId, String expenseTypeName, double totalExpenses) {
+        this.expenseTypeId = expenseTypeId;
+        this.expenseTypeName = expenseTypeName;
         this.totalExpenses = totalExpenses;
     }
 
     public ExpenseType() {
     }
 
-    public int getTypeId() {
-        return typeId;
+    public int getExpenseTypeId() {
+        return expenseTypeId;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getExpenseTypeName() {
+        return expenseTypeName;
     }
 
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
+    public void setExpenseTypeId(int expenseTypeId) {
+        this.expenseTypeId = expenseTypeId;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public void setExpenseTypeName(String expenseTypeName) {
+        this.expenseTypeName = expenseTypeName;
     }
 
     public double getTotalExpenses() {

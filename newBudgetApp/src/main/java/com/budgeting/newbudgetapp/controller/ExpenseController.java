@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin
@@ -71,6 +73,13 @@ public class ExpenseController {
         expenseDao.deleteAll();
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @RequestMapping(value = "expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.DELETE)
+    public void deleteMultipleExpenses(@RequestBody int[] expenseIds) {
+        List<Integer> idsList = IntStream.of(expenseIds).boxed().toList();
+        expenseDao.deleteMultipleExpenses(idsList);
+    }
+
     @RequestMapping(path = "/expenses/editExpense", method = RequestMethod.PUT)
     public void editExpense(@Valid @RequestBody Expense expense) {
         jdbcExpenseDao.updateExpense(expense);
@@ -95,6 +104,15 @@ public class ExpenseController {
     public List<TimeBasedTotal> totalExpensesFullYearWithMonth(Principal principal) {
         int actualUserId = userDao.findIdByUsername(principal.getName());
         return expenseDao.totalsFullYearWithMonth(actualUserId);
+    }
+
+    @RequestMapping(path = "/expenses/addAllExpenses", method = RequestMethod.POST)
+    public void addAllAddedExpenses(@RequestBody Expense[] expenses, Principal principal) {
+        List<Expense> expenses1 = Arrays.asList(expenses);
+        jdbcExpenseDao.multipleExpenseInsert(expenses1);
+        for (Expense expense : expenses1) {
+            jdbcExpenseDao.addUserExpense(userDao.findIdByUsername(principal.getName()), expense.getExpenseId());
+        }
     }
 
 

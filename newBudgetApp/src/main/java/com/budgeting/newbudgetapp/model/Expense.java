@@ -78,4 +78,16 @@ public class Expense {
     public void setExpenseTypeId(int expenseTypeId) {
         this.expenseTypeId = expenseTypeId;
     }
+
+    @Override
+    public String toString() {
+        return "Expense{" +
+                "expenseId=" + expenseId +
+                ", expenseName='" + expenseName + '\'' +
+                ", expenseAmount=" + expenseAmount +
+                ", expenseTypeId=" + expenseTypeId +
+                ", expenseTypeName='" + expenseTypeName + '\'' +
+                ", expenseDate=" + expenseDate +
+                '}';
+    }
 }

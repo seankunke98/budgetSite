@@ -6,6 +6,7 @@
       <v-toolbar-title class="mx-auto">Personal Budgeter</v-toolbar-title>
       <v-app-bar-nav-icon>
         <v-switch
+        prepend-icon="mdi-theme-light-dark"
           v-model="$vuetify.theme.dark"
           inset
           class="pt-5"
@@ -72,20 +73,24 @@ export default {
   components: {
     
   },
-  data: () => ({
+  data () {
+    return {
     drawer: false,
-  }),
+    switch: false,
+    darkmode: false
+    }
+  },
   methods: {
     resetAuth() {
       if (location.pathname == '/') {
         this.$store.commit("LOGOUT")
       }
-    },   
+    }
   },
   created() {
     this.resetAuth()
   }
-};
+}
 </script>
 <style>
 

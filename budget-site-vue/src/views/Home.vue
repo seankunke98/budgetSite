@@ -10,6 +10,7 @@
 <script>
 import SparklineChartVue from "@/components/SparklineChart.vue";
 import PlanetChartVue from "@/components/PlanetChart.vue";
+import ExpenseService from "@/services/ExpenseService";
 
 export default {
   name: "home-page",
@@ -17,6 +18,26 @@ export default {
     PlanetChartVue,
     SparklineChartVue
   },
+  methods: {
+    getExpensesOnLogin() {
+      ExpenseService.getExpensesByUser().then((response) => {
+        if(response.status == 200) {
+          this.$store.commit("SET_EXPENSES", response.data)
+        }
+      })
+    },
+    setExpenseTypes () {
+        ExpenseService.getExpenseTypes().then(response => {
+          if(response.status == 200) {
+            this.$store.commit("SET_EXPENSE_TYPES", response.data)
+          }
+        })
+      },
+  },
+  created() {
+    this.getExpensesOnLogin()
+    this.setExpenseTypes()
+  }
 };
 </script>
 

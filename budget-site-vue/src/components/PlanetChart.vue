@@ -12,7 +12,8 @@
 </template>
 
 <script>
-import ExpenseService from "@/services/ExpenseService";
+
+import ExpenseService from '../services/ExpenseService'
 
 export default {
   name: "DonutExample",
@@ -70,82 +71,23 @@ export default {
   },
 
   methods: {
-    async getTotalsByType() {
-      ExpenseService.sumOfExpensesEachType().then((response) => {
-        if (response.status == 200) {
-          this.$store.commit("SET_EXPENSE_TYPE_TOTALS", response.data);
+    getTotalsByType() {  
+      ExpenseService.sumOfExpensesEachType().then(response => {
+        if(response.status == 200) {
+          this.$store.commit("SET_EXPENSE_TYPE_TOTALS", response.data)
         }
         for (let i = 0; i < this.$store.state.totalExpensesByType.length; i++) {
         this.series.push(this.$store.state.totalExpensesByType[i].totalExpenses);
       }
-      for (let i = 0; i < this.$store.state.totalExpensesByType.length; i++) {
-        this.chartOptions.labels.push(this.$store.state.totalExpensesByType[i].typeName);
+        for (let i = 0; i < this.$store.state.totalExpensesByType.length; i++) {
+        this.chartOptions.labels.push(this.$store.state.totalExpensesByType[i].expenseTypeName);
       }
+      })
         this.loading = false;
-      });
     },
   },
-  computed: {
-  //   series() {
-  //     let totals = [];
-  //     for (let i = 0; i < this.$store.state.totalExpensesByType.length; i++) {
-  //       totals.push(this.$store.state.totalExpensesByType[i].totalExpenses);
-  //     }
-  //     return totals;
-  //   },
-  //   chartOptions: function () {
-  //     let names = [];
-  //     for (let i = 0; i < this.$store.state.totalExpensesByType.length; i++) {
-  //       names.push(this.$store.state.totalExpensesByType[i].typeName);
-  //     }
-  //     return {
-  //       labels: names,
-  //       noData: "No Expenses",
-  //       plotOptions: {
-  //         pie: {
-  //           startAngle: 0,
-  //           endAngle: 360,
-  //           expandOnClick: true,
-  //         },
-  //       },
-  //       chart: {
-  //         animations: {
-  //           enabled: true,
-  //           easing: "easeinout",
-  //           speed: 500,
-  //           dynamicAnimation: {
-  //             enabled: true,
-  //             speed: 350,
-  //           },
-  //         },
-  //       },
-  //       legend: {
-  //         show: true,
-  //         showForSingleSeries: false,
-  //         showForNullSeries: true,
-  //         showForZeroSeries: true,
-  //         position: "bottom",
-  //         horizontalAlign: "center",
-  //         fontSize: "18px",
-  //         onItemClick: {
-  //           toggleDataSeries: true,
-  //         },
-  //         onItemHover: {
-  //           highlightDataSeries: true,
-  //         },
-  //       },
-  //       responsive: [{
-  //         breakpoint: 1000,
-  //         options: {
-  //           height: 200,
-  //           width: 200,
-  //           yaxis: 200
-  //         }
-  //       }]
-  //     };
-  //   },
-  },
-  created() {},
+  computed: {},
+  created() {}
 };
 </script>
 

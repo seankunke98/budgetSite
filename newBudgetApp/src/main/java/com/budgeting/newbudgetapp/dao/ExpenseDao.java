@@ -31,6 +31,10 @@ public interface ExpenseDao {
 
     double totalExpenses(int userId);
 
+    void multipleExpenseInsert(List<Expense> expenses);
+
+    void deleteMultipleExpenses(List<Integer> expenses);
+
 
 
 }

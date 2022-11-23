@@ -14,21 +14,18 @@
     >
 </v-sparkline>
     
-    
-
     <v-divider></v-divider>
 
-    <v-row dense align="center">
-    <v-col cols="6" md="6" class="pl-10 pt-10">
-        <v-row class="fill-height">
+    <v-row justify="center" align="center" class="pt-2">
+    <v-col cols="3" offset="">
+        <v-row justify="center" align="center" >
         <v-item-group v-model="selectedGradient" mandatory>
-            <v-row>
+            <v-row justify="center" align="center">
             <v-item
                 v-for="(gradient, i) in gradients"
                 :key="i"
                 v-slot="{ active, toggle }"
                 :value="gradient"
-                
             >
                 <v-card
                 :style="{
@@ -41,7 +38,7 @@
                 }"
                 width="30"
                 height="30"
-                class="mr-2"
+                class="mr-4"
                 @click.native="toggle"
                 ></v-card>
             </v-item>
@@ -49,13 +46,13 @@
         </v-item-group>
         </v-row>
     </v-col>
-    <v-col cols="6" class="pl-10 pt-10">
-        <v-row class="fill-height">
+    <v-col cols="2">
+        <v-row justify="center" align="center" >
         <v-switch v-model="fill" label="Filled"></v-switch>
         </v-row>
     </v-col>
 
-    <v-col cols="12" md="6" class="pl-10">
+    <v-col cols="2" order="3">
         <v-slider
         v-model="radius"
         label="Radius"
@@ -65,7 +62,7 @@
         ></v-slider>
     </v-col>
 
-    <v-col cols="12" md="6" >
+    <v-col cols="2" order="2">
         <v-slider
         v-model="padding"
         label="Padding"
@@ -82,8 +79,9 @@
     <v-btn
         block
         text
+        v-bind:to="{ name: 'expenses-page' }"
     >
-        Go to Report
+        Go to Expense Overview
     </v-btn>
     </v-card-actions>
 
@@ -91,6 +89,9 @@
 </template>
 
 <script>
+
+import ExpenseService from '@/services/ExpenseService';
+
 const gradients = [
 ["#222"],
 ["#42b3f4"],
@@ -100,7 +101,6 @@ const gradients = [
 ["#f72047", "#ffd200", "#1feaea"],
 ];
 
-import ExpenseService from '../services/ExpenseService'
 
 export default {
 data: () => ({
@@ -114,27 +114,30 @@ data: () => ({
     labels: []
 }),
 methods: {
-    async getValues() {
+    getValues() {
         this.loading = true;
         ExpenseService.getFullYearTotalsWithMonth().then(response => {
-            if(response.status == 200) {
-                console.log(response.data)
-                this.$store.commit("SET_EXPENSE_DATE_TOTALS", response.data)
-            }
-            for (let i = 0; i < this.$store.state.totalExpensesByDate.length; i++) {
+        if(response.status == 200) {
+            // console.log(response.data)
+            this.$store.commit("SET_EXPENSE_DATE_TOTALS", response.data)
+        }
+        for (let i = 0; i < this.$store.state.totalExpensesByDate.length; i++) {
         this.value.push(
-        this.$store.state.totalExpensesByDate[i].totalExpenses
+            this.$store.state.totalExpensesByDate[i].totalExpenses
         )
         this.labels.push(
-        this.$store.state.totalExpensesByDate[i].monthName
+            this.$store.state.totalExpensesByDate[i].monthName
         );
     }
-            this.loading = false
-        })
+    })
+        this.loading = false
     },
 },
 mounted() {
     this.getValues()
+},
+created() {},
+computed: {
 }
 
 };

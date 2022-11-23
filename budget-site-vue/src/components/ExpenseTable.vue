@@ -2,9 +2,9 @@
   <v-container>
   <v-data-table
   id="expense-table"
-  v-model="selected"
+  
     :headers="headers"
-    :items="expenses"
+    :items="tableExpenses"
     :single-select="singleSelect"
     item-key="expenseId"
     sort-by="name"
@@ -12,6 +12,7 @@
     class="elevation-1"
     :loading="loading"
     :options.sync="options"
+    v-model="selected"
   >
     <template v-slot:top>
       <v-toolbar
@@ -37,22 +38,43 @@
           max-width="fit-content"
         >
           <template v-slot:activator="{ on, attrs }">
+            
+            <v-btn
+        color="primary"
+        @click.prevent="deleteSelectedExpenses"
+      >
+        Delete Selected
+      </v-btn>
+      <v-divider
+            class="mx-4"
+          inset
+          vertical></v-divider>
+            <v-btn
+        color="primary"
+        @click.prevent="initialize"
+      >
+        Reset
+      </v-btn>
+      <v-divider
+            class="mx-4"
+          inset
+          vertical></v-divider>
             <v-btn
               color="primary"
               dark
-              class="mb-2"
+              class="mx-4"
               v-bind="attrs"
               v-on="on"
             >
               New Expense
-            </v-btn>
+            </v-btn>      
           </template>
           <v-card>
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
 
-            <v-card-text v-if="formTitle == 'New Item'">
+            <v-card-text>
               <v-container>
                 <v-row justify="center">
                   <v-col
@@ -61,8 +83,10 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="newExpense.expenseName"
+                    v-model="editedExpense.expenseName"
                       label="Expense Name"
+                      clearable
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -71,8 +95,11 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="newExpense.expenseAmount"
+                    v-model="editedExpense.expenseAmount"
                       label="Expense Amount"
+                      type="number"
+                      clearable
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -82,10 +109,12 @@
                   >
                   <v-select
           :items="expenseTypeOptions"
-          v-model="newExpense.expenseTypeId"
-          :item-value="'typeId'"
-          :item-text="'typeName'"
+          v-model="editedExpense.expenseTypeName"
+          :item-value="'expenseTypeName'"
+          :item-text="'expenseTypeName'"
           label="Type of Expense"
+          clearable
+          required
         ></v-select>
                   </v-col>
                   <v-col cols="12"
@@ -93,62 +122,12 @@
                     md="4"
                     >
                     <v-date-picker
-          v-model="newExpense.expenseDate"
+                    v-model="editedExpense.expenseDate"
           full-width
         ></v-date-picker></v-col>
                 </v-row>
               </v-container>
             </v-card-text>
-            <v-card-text v-else>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedExpense.expenseName"
-                      label="Expense Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedExpense.expenseAmount"
-                      label="Expense Amount"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  <v-select
-          v-model="editedExpense.expenseTypeId"
-          :items="expenseTypeOptions"
-          :item-value="'typeId'"
-          :item-text="'typeName'"
-          label="Type of Expense"
-        ></v-select>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  <v-date-picker
-          v-model="editedExpense.expenseDate"
-          full-width
-        ></v-date-picker>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -196,29 +175,25 @@
         mdi-delete
       </v-icon>
     </template>
-    <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click.prevent="initialize"
-      >
-        Reset
-      </v-btn>
-    </template>
   </v-data-table>
 
 </v-container>
 </template>
 
 <script>
+
 import ExpenseService from '../services/ExpenseService'
   export default {
     data: () => ({
       loading: true,
       totalExpenses: 0,
       options: {},
+      tableExpenses: [],
       dialog: false,
-      selected: [],
+      currentSessionExpenses: [],
       expenseTypeOptions: [],
+      selectedIds: [],
+      selected: [],
       selectedType: '',
       dialogDelete: false,
       singleSelect: false,
@@ -234,28 +209,26 @@ import ExpenseService from '../services/ExpenseService'
         { text: 'Expense Date', value: 'expenseDate' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
-      expenses: [],
+      
       editedIndex: -1,
+      currentSessionIndex: -1,
       editedExpense: {
         expenseId: '',
         expenseName: '',
         expenseAmount: '',
-        expenseTypeId: '',
         expenseTypeName: '',
         expenseDate: ''
       },
-      newExpense: {
-        expenseName: '',
-        expenseAmount: '',
-        expenseTypeId: '',
-        expenseTypeName: '',
-        expenseDate: ''
-      },
+      // newExpense: {
+      //   expenseName: '',
+      //   expenseAmount: '',
+      //   expenseTypeId: '',
+      //   expenseTypeName: '',
+      //   expenseDate: ''
+      // },
       defaultExpense: {
-        expenseId: '',
         expenseName: '',
         expenseAmount: '',
-        expenseTypeId: '',
         expenseTypeName: '',
         expenseDate: ''
       },
@@ -265,6 +238,17 @@ import ExpenseService from '../services/ExpenseService'
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
+      // ...mapState({
+      //   stateExpenses: 'expenses'
+      // }),
+      // expenses: {
+      //   get() {
+      //     return this.stateExpenses
+      //   },
+      //   set(newExpenses) {
+      //     return newExpenses
+      //   }
+      // }
     },
 
     watch: {
@@ -280,48 +264,78 @@ import ExpenseService from '../services/ExpenseService'
       this.initialize(),
       this.setExpenseTypes()
     },
-
+    // unmounted() {
+    //   this.setUpdatedExpenses()
+    // },
+    updated() {
+      
+    },
     methods: {
-      initialize () {
+      async initialize () {
         this.loading = true
         ExpenseService.getExpensesByUser().then(response => {
           if(response.status == 200) {
-            this.expenses = response.data
-            this.$store.commit("SET_EXPENSES", response.data)
+            this.tableExpenses = response.data
           }
           this.loading = false;
+        })
+      },
+      setUpdatedExpenses () {
+        ExpenseService.commitExpenseChanges(this.tableExpenses).then(response => {
+          if(response.status == 200) {
+            this.$store.commit("SET_EXPENSES", this.tableExpenses)
+          }
         })
       },
       setExpenseTypes () {
         ExpenseService.getExpenseTypes().then(response => {
           if(response.status == 200) {
             this.$store.commit("SET_EXPENSE_TYPES", response.data)
+            this.expenseTypeOptions = response.data
           }
-          this.expenseTypeOptions = this.$store.state.expenseTypes
         })
       },
-      editItem (expense) {
-        this.editedIndex = this.expenses.indexOf(expense)
-        this.editedExpense = Object.assign({}, expense)
+      editItem (item) {
+        this.editedIndex = this.tableExpenses.indexOf(item)
+        console.log(item)
+        this.editedExpense = Object.assign({}, item)
         this.dialog = true
       },
 
-      deleteItem (expense) {
-        this.editedIndex = this.expenses.indexOf(expense)
-        this.editedExpense = Object.assign({}, expense)
+      deleteSelectedExpenses() {
+        this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
+      },
+
+      deleteSelectedIds() {
+        this.selectedIds = this.selected.map(item => item.expenseId)
+        ExpenseService.deleteMultipleExpenses(this.selectedIds).then((response) => {
+          if(response.status == 200) {
+            console.log("Success")
+          }
+        })
+      },
+
+      deleteItem (item) {
+        this.editedIndex = this.tableExpenses.indexOf(item)
+        this.editedExpense = Object.assign({}, item)
         this.dialogDelete = true
-        this.initialize()
       },
 
       deleteItemConfirm () {
-        this.expenseId = this.editedExpense.expenseId;
-        ExpenseService.deleteExpensesById(this.expenseId).then(response => {
-          if(response.status == 200 || response.status == 204) {
-            this.expenses.splice(response.data)
-            this.$store.commit("DELETE_EXPENSE", response.data)
+        ExpenseService.deleteExpensesById(this.editedExpense.expenseId).then((response) => {
+          if(response.status == 200) {
+            console.log(location)
+            this.tableExpenses.splice(this.editedIndex, 1)
           }
         })
         this.closeDelete()
+        // let id = this.editedExpense.expenseId;
+        // ExpenseService.deleteExpensesById(id).then(response => {
+        //   if(response.status == 200 || response.status == 204) {
+        //     this.$store.commit("DELETE_EXPENSE", response.data)
+        //   }
+        // })
+        // this.initialize()
       },
 
       close () {
@@ -340,26 +354,46 @@ import ExpenseService from '../services/ExpenseService'
         })
       },
       save () {
-        if(this.formTitle == 'New Item') {
-          ExpenseService.addExpense(this.newExpense).then(response => {
-            if(response.status == 201) {
-              this.expenses.push(response.data)
-              this.$store.commit("ADD_EXPENSE", response.data)
+        if (this.editedIndex > -1) {
+          console.log(this.editedExpense)
+          const expense = this.editedExpense
+          ExpenseService.editExpense(expense).then((response) => {
+            if(response.status == 200) {
+              this.tableExpenses[this.editedIndex] = this.editedExpense
             }
           })
         } else {
-          Object.assign(this.expenses[this.editedIndex], this.editedItem)
-          ExpenseService.editExpense(this.editedExpense).then(response => {
+          console.log(this.editedExpense)
+          const expense = this.editedExpense
+          ExpenseService.addExpense(expense).then((response) => {
             if(response.status == 200) {
-              this.$store.commit("UPDATE_EXPENSE", response.data)
+              this.tableExpenses.push(this.editedExpense)
             }
           })
         }
         this.close()
       },
-      
+        // if(this.editedIndex > -1) {
+        //   // this.$set(this.expenses[this.editedIndex], '')
+        //   // Object.assign(this.tableExpenses[this.editedIndex], this.editedExpense)
+        //   ExpenseService.editExpense(this.editedExpense).then(response => {
+        //     if(response.status == 200) {
+        //       this.expenses.$set(this.editedIndex, 1, this.editedExpense)
+        //       // Object.assign(this.tableExpenses[this.editedIndex], this.editedExpense)
+        //     }
+        //   })
+        // } else {
+        //   ExpenseService.addExpense(this.editedExpense).then(response => {
+        //     if(response.status == 201) {
+        //       this.$set(this.expenses, this.editedIndex, this.editedExpense)
+        //     }
+        //   })
+        //   this.$nextTick(() => {
+        //   this.expenses.push(this.editedExpense)
+        // })
+        // }
+        // this.close()
     },
-    
   }
 </script>
 
