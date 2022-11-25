@@ -15,7 +15,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin
@@ -73,11 +72,14 @@ public class ExpenseController {
         expenseDao.deleteAll();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    @RequestMapping(value = "expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.DELETE)
-    public void deleteMultipleExpenses(@RequestBody int[] expenseIds) {
-        List<Integer> idsList = IntStream.of(expenseIds).boxed().toList();
-        expenseDao.deleteMultipleExpenses(idsList);
+    @RequestMapping(value = "expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.POST)
+    public void deleteMultipleExpenses(@RequestBody Expense[] selected) {
+        System.out.println(Arrays.toString(selected));
+        for(Expense current : selected) {
+            int expenseId = current.getExpenseId();
+            jdbcExpenseDao.deleteExpense(expenseId);
+        }
+
     }
 
     @RequestMapping(path = "/expenses/editExpense", method = RequestMethod.PUT)

@@ -83,7 +83,7 @@
                     md="4"
                   >
                     <v-text-field
-                    v-model="editedExpense.expenseName"
+                    v-model="editedItem.expenseName"
                       label="Expense Name"
                       clearable
                       required
@@ -95,7 +95,7 @@
                     md="4"
                   >
                     <v-text-field
-                    v-model="editedExpense.expenseAmount"
+                    v-model="editedItem.expenseAmount"
                       label="Expense Amount"
                       type="number"
                       clearable
@@ -109,7 +109,7 @@
                   >
                   <v-select
           :items="expenseTypeOptions"
-          v-model="editedExpense.expenseTypeName"
+          v-model="editedItem.expenseTypeName"
           :item-value="'expenseTypeName'"
           :item-text="'expenseTypeName'"
           label="Type of Expense"
@@ -122,7 +122,7 @@
                     md="4"
                     >
                     <v-date-picker
-                    v-model="editedExpense.expenseDate"
+                    v-model="editedItem.expenseDate"
           full-width
         ></v-date-picker></v-col>
                 </v-row>
@@ -192,7 +192,7 @@ import ExpenseService from '../services/ExpenseService'
       dialog: false,
       currentSessionExpenses: [],
       expenseTypeOptions: [],
-      selectedIds: [],
+      // selectedIds: [],
       selected: [],
       selectedType: '',
       dialogDelete: false,
@@ -212,7 +212,7 @@ import ExpenseService from '../services/ExpenseService'
       
       editedIndex: -1,
       currentSessionIndex: -1,
-      editedExpense: {
+      editedItem: {
         expenseId: '',
         expenseName: '',
         expenseAmount: '',
@@ -226,7 +226,7 @@ import ExpenseService from '../services/ExpenseService'
       //   expenseTypeName: '',
       //   expenseDate: ''
       // },
-      defaultExpense: {
+      defaultItem: {
         expenseName: '',
         expenseAmount: '',
         expenseTypeName: '',
@@ -303,13 +303,22 @@ import ExpenseService from '../services/ExpenseService'
       },
 
       deleteSelectedExpenses() {
-        this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
+        ExpenseService.deleteMultipleExpenses(this.selected).then((response) => {
+          if(response.status == 200) {
+            console.log(response.data)
+            this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
+            console.log("Success")
+          }
+        })
       },
 
       deleteSelectedIds() {
-        this.selectedIds = this.selected.map(item => item.expenseId)
-        ExpenseService.deleteMultipleExpenses(this.selectedIds).then((response) => {
+        const selectedIds = this.selected.map(item => item.expenseId)
+        console.log(selectedIds)
+        ExpenseService.deleteMultipleExpenses(selectedIds).then((response) => {
           if(response.status == 200) {
+            console.log(response.data)
+            this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
             console.log("Success")
           }
         })
@@ -317,15 +326,22 @@ import ExpenseService from '../services/ExpenseService'
 
       deleteItem (item) {
         this.editedIndex = this.tableExpenses.indexOf(item)
-        this.editedExpense = Object.assign({}, item)
+        console.log(this.editedIndex)
+        this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        ExpenseService.deleteExpensesById(this.editedExpense.expenseId).then((response) => {
+        const index = this.editedIndex
+        console.log(this.editedIndex)
+        console.log(index)
+        const item = this.editedItem
+        console.log(item)
+        console.log(this.editedItem)
+        ExpenseService.deleteExpensesById(item.expenseId).then((response) => {
           if(response.status == 200) {
-            console.log(location)
-            this.tableExpenses.splice(this.editedIndex, 1)
+            console.log(index)
+            this.tableExpenses.splice(index, 1)
           }
         })
         this.closeDelete()
@@ -341,7 +357,7 @@ import ExpenseService from '../services/ExpenseService'
       close () {
         this.dialog = false
         this.$nextTick(() => {
-          this.editedExpense = Object.assign({}, this.defaultExpense)
+          this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         })
       },
@@ -349,25 +365,25 @@ import ExpenseService from '../services/ExpenseService'
       closeDelete () {
         this.dialogDelete = false
         this.$nextTick(() => {
-          this.editedExpense = Object.assign({}, this.defaultExpense)
+          this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         })
       },
       save () {
         if (this.editedIndex > -1) {
-          console.log(this.editedExpense)
-          const expense = this.editedExpense
+          console.log(this.editedItem)
+          const expense = this.editedItem
           ExpenseService.editExpense(expense).then((response) => {
             if(response.status == 200) {
-              this.tableExpenses[this.editedIndex] = this.editedExpense
+              this.tableExpenses[this.editedIndex] = this.editedItem
             }
           })
         } else {
-          console.log(this.editedExpense)
-          const expense = this.editedExpense
+          console.log(this.editedItem)
+          const expense = this.editedItem
           ExpenseService.addExpense(expense).then((response) => {
             if(response.status == 200) {
-              this.tableExpenses.push(this.editedExpense)
+              this.tableExpenses.push(this.editedItem)
             }
           })
         }
