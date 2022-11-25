@@ -56,7 +56,7 @@ public class ExpenseController {
     }
 
 
-    @DeleteMapping("/expenses/deleteExpenses/{expenseId}")
+    @DeleteMapping("/expenses/{expenseId}")
     public void deleteExpensesById(@Valid @PathVariable int expenseId) {
         jdbcExpenseDao.deleteExpense(expenseId);
     }
@@ -68,16 +68,18 @@ public class ExpenseController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "expenses/deleteAll", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/expenses/deleteAll", method = RequestMethod.DELETE)
     public void deleteAllExpenses() {
         expenseDao.deleteAll();
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    @RequestMapping(value = "expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.DELETE)
-    public void deleteMultipleExpenses(@RequestBody int[] expenseIds) {
-        List<Integer> idsList = IntStream.of(expenseIds).boxed().toList();
-        expenseDao.deleteMultipleExpenses(idsList);
+    @RequestMapping(value = "/expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.POST)
+    public void deleteMultipleExpenses(@RequestBody Expense[] expenses) {
+        for(Expense current : expenses) {
+            int expenseId = current.getExpenseId();
+            expenseDao.deleteExpense(expenseId);
+        }
     }
 
     @RequestMapping(path = "/expenses/editExpense", method = RequestMethod.PUT)
@@ -114,6 +116,15 @@ public class ExpenseController {
             jdbcExpenseDao.addUserExpense(userDao.findIdByUsername(principal.getName()), expense.getExpenseId());
         }
     }
+
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+//    @RequestMapping(value = "/expenses", method = RequestMethod.POST)
+//    public void deleteSelectedExpenses(@RequestBody Expense[] expenses) {
+//        for(Expense current : expenses) {
+//            int expenseId = current.getExpenseId();
+//            expenseDao.deleteExpense(expenseId);
+//        }
+//    }
 
 
 }

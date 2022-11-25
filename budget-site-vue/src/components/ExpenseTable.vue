@@ -25,7 +25,7 @@
         <v-switch
         v-model="singleSelect"
         label="Single select"
-        class="pa-3"
+        class="pt-5"
       ></v-switch>
         <v-divider
           class="mx-4"
@@ -62,7 +62,6 @@
             <v-btn
               color="primary"
               dark
-              class="mx-4"
               v-bind="attrs"
               v-on="on"
             >
@@ -186,13 +185,10 @@ import ExpenseService from '../services/ExpenseService'
   export default {
     data: () => ({
       loading: true,
-      totalExpenses: 0,
       options: {},
       tableExpenses: [],
       dialog: false,
-      currentSessionExpenses: [],
       expenseTypeOptions: [],
-      selectedIds: [],
       selected: [],
       selectedType: '',
       dialogDelete: false,
@@ -209,9 +205,7 @@ import ExpenseService from '../services/ExpenseService'
         { text: 'Expense Date', value: 'expenseDate' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
-      
       editedIndex: -1,
-      currentSessionIndex: -1,
       editedExpense: {
         expenseId: '',
         expenseName: '',
@@ -219,13 +213,6 @@ import ExpenseService from '../services/ExpenseService'
         expenseTypeName: '',
         expenseDate: ''
       },
-      // newExpense: {
-      //   expenseName: '',
-      //   expenseAmount: '',
-      //   expenseTypeId: '',
-      //   expenseTypeName: '',
-      //   expenseDate: ''
-      // },
       defaultExpense: {
         expenseName: '',
         expenseAmount: '',
@@ -233,24 +220,11 @@ import ExpenseService from '../services/ExpenseService'
         expenseDate: ''
       },
     }),
-
     computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
-      // ...mapState({
-      //   stateExpenses: 'expenses'
-      // }),
-      // expenses: {
-      //   get() {
-      //     return this.stateExpenses
-      //   },
-      //   set(newExpenses) {
-      //     return newExpenses
-      //   }
-      // }
     },
-
     watch: {
       dialog (val) {
         val || this.close()
@@ -259,16 +233,11 @@ import ExpenseService from '../services/ExpenseService'
         val || this.closeDelete()
       },
     },
-
     created () {
       this.initialize(),
       this.setExpenseTypes()
     },
-    // unmounted() {
-    //   this.setUpdatedExpenses()
-    // },
-    updated() {
-      
+    updated() {      
     },
     methods: {
       async initialize () {
@@ -303,9 +272,14 @@ import ExpenseService from '../services/ExpenseService'
       },
 
       deleteSelectedExpenses() {
+        ExpenseService.deleteMultipleExpenses(this.selected).then((response) => {
+          if(response.status == 200) {
+            this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
+            console.log("Success")
+          }
+        })
         this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
       },
-
       deleteSelectedIds() {
         this.selectedIds = this.selected.map(item => item.expenseId)
         ExpenseService.deleteMultipleExpenses(this.selectedIds).then((response) => {
@@ -314,13 +288,11 @@ import ExpenseService from '../services/ExpenseService'
           }
         })
       },
-
       deleteItem (item) {
         this.editedIndex = this.tableExpenses.indexOf(item)
         this.editedExpense = Object.assign({}, item)
         this.dialogDelete = true
       },
-
       deleteItemConfirm () {
         ExpenseService.deleteExpensesById(this.editedExpense.expenseId).then((response) => {
           if(response.status == 200) {
@@ -329,15 +301,7 @@ import ExpenseService from '../services/ExpenseService'
           }
         })
         this.closeDelete()
-        // let id = this.editedExpense.expenseId;
-        // ExpenseService.deleteExpensesById(id).then(response => {
-        //   if(response.status == 200 || response.status == 204) {
-        //     this.$store.commit("DELETE_EXPENSE", response.data)
-        //   }
-        // })
-        // this.initialize()
       },
-
       close () {
         this.dialog = false
         this.$nextTick(() => {
@@ -345,7 +309,6 @@ import ExpenseService from '../services/ExpenseService'
           this.editedIndex = -1
         })
       },
-
       closeDelete () {
         this.dialogDelete = false
         this.$nextTick(() => {
@@ -356,43 +319,23 @@ import ExpenseService from '../services/ExpenseService'
       save () {
         if (this.editedIndex > -1) {
           console.log(this.editedExpense)
-          const expense = this.editedExpense
-          ExpenseService.editExpense(expense).then((response) => {
+          this.tableExpenses.splice(this.editedIndex, 1, this.editedExpense)
+          ExpenseService.editExpense(this.editedExpense).then((response) => {
             if(response.status == 200) {
-              this.tableExpenses[this.editedIndex] = this.editedExpense
+              console.log('Your expense has been updated.')
             }
           })
         } else {
           console.log(this.editedExpense)
-          const expense = this.editedExpense
-          ExpenseService.addExpense(expense).then((response) => {
+          this.tableExpenses.unshift(this.editedExpense)
+          ExpenseService.addExpense(this.editedExpense).then((response) => {
             if(response.status == 200) {
-              this.tableExpenses.push(this.editedExpense)
+              console.log("Your expense has been added.")
             }
           })
         }
         this.close()
       },
-        // if(this.editedIndex > -1) {
-        //   // this.$set(this.expenses[this.editedIndex], '')
-        //   // Object.assign(this.tableExpenses[this.editedIndex], this.editedExpense)
-        //   ExpenseService.editExpense(this.editedExpense).then(response => {
-        //     if(response.status == 200) {
-        //       this.expenses.$set(this.editedIndex, 1, this.editedExpense)
-        //       // Object.assign(this.tableExpenses[this.editedIndex], this.editedExpense)
-        //     }
-        //   })
-        // } else {
-        //   ExpenseService.addExpense(this.editedExpense).then(response => {
-        //     if(response.status == 201) {
-        //       this.$set(this.expenses, this.editedIndex, this.editedExpense)
-        //     }
-        //   })
-        //   this.$nextTick(() => {
-        //   this.expenses.push(this.editedExpense)
-        // })
-        // }
-        // this.close()
     },
   }
 </script>
