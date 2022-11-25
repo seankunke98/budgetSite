@@ -12,7 +12,7 @@ export default {
         return axios.post(`/expenses/addExpense`, expense)
     },
     deleteExpensesById(expenseId) {
-        return axios.delete(`/expenses/deleteExpenses/${expenseId}`)
+        return axios.delete(`/expenses/${expenseId}`)
     },
     deleteMultipleExpenses(selected) {
         return axios.post(`/expenses/deleteExpenses/deleteMultipleExpenses`, selected)
