@@ -72,16 +72,6 @@ public class ExpenseController {
         expenseDao.deleteAll();
     }
 
-<<<<<<< HEAD
-    @RequestMapping(value = "expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.POST)
-    public void deleteMultipleExpenses(@RequestBody Expense[] selected) {
-        System.out.println(Arrays.toString(selected));
-        for(Expense current : selected) {
-            int expenseId = current.getExpenseId();
-            jdbcExpenseDao.deleteExpense(expenseId);
-        }
-
-=======
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @RequestMapping(value = "/expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.POST)
     public void deleteMultipleExpenses(@RequestBody Expense[] expenses) {
@@ -89,7 +79,6 @@ public class ExpenseController {
             int expenseId = current.getExpenseId();
             expenseDao.deleteExpense(expenseId);
         }
->>>>>>> 17db456b645920db499d022a84613d5a3672940f
     }
 
     @RequestMapping(path = "/expenses/editExpense", method = RequestMethod.PUT)

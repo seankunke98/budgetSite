@@ -33,7 +33,7 @@ public interface ExpenseDao {
 
     void multipleExpenseInsert(List<Expense> expenses);
 
-    void deleteMultipleExpenses(List<Integer> expenses);
+
 
 
 

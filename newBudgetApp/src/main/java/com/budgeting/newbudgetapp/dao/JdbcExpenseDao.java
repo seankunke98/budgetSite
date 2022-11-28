@@ -5,9 +5,7 @@ import com.budgeting.newbudgetapp.model.Expense;
 import com.budgeting.newbudgetapp.model.TimeBasedTotal;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Component
 public class JdbcExpenseDao implements ExpenseDao {
@@ -168,17 +168,6 @@ public class JdbcExpenseDao implements ExpenseDao {
                 return expenses.size();
             }
         });
-    }
-
-    @Override
-    public void deleteMultipleExpenses(List<Integer> expenses) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("ids", expenses);
-        parameterJdbcTemplate.update("delete from expenses where expense_id in (:ids)", parameterSource);
-
-//        String sql = String.join(",", Collections.nCopies(expenses.size(), "?"));
-//
-//        int rows = parameterJdbcTemplate.update(sql, namedParameters);
-//        System.out.println(rows);
     }
 
     @Override
