@@ -24,12 +24,13 @@ public class JdbcExpenseTypeDao implements ExpenseTypeDao {
     public List<ExpenseType> totalExpensesEachType(int userId) throws JsonProcessingException {
         List<ExpenseType> totalExpenses = new ArrayList<>();
         ExpenseType expenseType = new ExpenseType();
-        String sql = "select distinct total_expenses, total_expenses_by_type.type_name, type_id from total_expenses_by_type join expense_types et on total_expenses_by_type.type_name = et.type_name \n" +
-                "join expenses e on et.type_name = e.expense_type_name join user_expense ue on e.expense_id = ue.expense_id where user_id = ?";
+        String sql = "select sum(expense_amount) as total_expenses, expense_type_name from (SELECT expenses.expense_id, expenses.expense_amount, expenses.expense_name, expense_type_name, expense_date FROM expenses join user_expense ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.expense_type_name = et.type_name \n"
+                + "where user_id = ?) as user_expenses group by expense_type_name";
+//        String sql = "select distinct total_expenses, total_expenses_by_type.type_name, type_id from total_expenses_by_type join expense_types et on total_expenses_by_type.type_name = et.type_name \n" +
+//                "join expenses e on et.type_name = e.expense_type_name join user_expense ue on e.expense_id = ue.expense_id where user_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
 
         while(rowSet.next()) {
-
             expenseType = mapRowToExpenseTypeTotal(rowSet);
             totalExpenses.add(expenseType);
         }
@@ -59,9 +60,9 @@ public class JdbcExpenseTypeDao implements ExpenseTypeDao {
         return totals;
     }
 
-    private ExpenseType mapRowToExpenseTypeTotal(SqlRowSet rowSet) {
-        return new ExpenseType(rowSet.getInt("type_id"), rowSet.getString("type_name"), rowSet.getDouble("total_expenses"));
-    }
+//    private ExpenseType mapRowToExpenseTypeTotal(SqlRowSet rowSet) {
+//        return new ExpenseType(rowSet.getInt("type_id"), rowSet.getString("expense_type_name"), rowSet.getDouble("total_expenses"));
+//    }
     private ExpenseType mapRowToExpenseType(SqlRowSet rowSet) {
         return new ExpenseType(rowSet.getInt("type_id"), rowSet.getString("type_name"));
     }

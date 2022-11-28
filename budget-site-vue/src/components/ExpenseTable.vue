@@ -72,7 +72,18 @@
               v-on="on"
             >
               New Expense
-            </v-btn>      
+            </v-btn>
+            <v-divider
+            class="mx-4"
+          inset
+          vertical></v-divider>
+            <v-btn
+        color="primary"
+        link
+        v-bind:to="{ name: 'home-page' }"
+      >
+        Home
+      </v-btn>
           </template>
           <v-card>
             <v-card-title>

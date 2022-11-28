@@ -21,6 +21,11 @@ public class ExpenseType {
         this.totalExpenses = totalExpenses;
     }
 
+    public ExpenseType(String expenseTypeName, double totalExpenses) {
+        this.expenseTypeName = expenseTypeName;
+        this.totalExpenses = totalExpenses;
+    }
+
     public ExpenseType() {
     }
 

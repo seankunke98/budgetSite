@@ -1,9 +1,9 @@
 <template>
   <div id="home-main">
-    <v-container fluid>
+    <v-container>
       <planet-chart-vue />
       <sparkline-chart-vue />
-        </v-container>
+    </v-container>
   </div>
 </template>
 

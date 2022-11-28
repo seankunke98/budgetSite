@@ -98,6 +98,7 @@ div.chart-wrapper {
   align-items: center;
   max-height: 50%;
   max-width: 100%;
+  padding-bottom: 200px;
 }
 
 </style>

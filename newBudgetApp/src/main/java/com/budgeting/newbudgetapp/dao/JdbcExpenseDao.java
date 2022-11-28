@@ -13,9 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.time.format.TextStyle;
+import java.util.*;
 
 @Component
 public class JdbcExpenseDao implements ExpenseDao {
@@ -96,11 +95,14 @@ public class JdbcExpenseDao implements ExpenseDao {
     @Override
     public List<TimeBasedTotal> totalsFullYearWithMonth(int userId) {
         List<TimeBasedTotal> totals = new ArrayList<>();
-        String sql = "select trim(monthname) as monthname, total_expenses from total_expenses_each_month\n" +
-                "                join expenses e on e.expense_date = total_expenses_each_month.expense_date join user_expense ue on e.expense_id = ue.expense_id\n" +
-                "                where ue.user_id = ?;";
+        String sql = "SELECT date_trunc('month', expense_date)::date as month,\n" +
+                "                sum(expense_amount) AS total_expenses\n" +
+                "                FROM (SELECT expenses.expense_id, expenses.expense_amount, expenses.expense_name, expense_type_name, expense_date FROM expenses join user_expense ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.expense_type_name = et.type_name\n" +
+                "                             where user_id = ?) as user_expenses\n" +
+                "                WHERE expense_date >= '2022-01-01' AND expense_date <= '2022-12-01'\n" +
+                "                GROUP BY month\n" +
+                "                order by month";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
-
         while (rowSet.next()) {
             totals.add(mapRowToTotal(rowSet));
         }
@@ -208,7 +210,7 @@ public class JdbcExpenseDao implements ExpenseDao {
 
     private TimeBasedTotal mapRowToTotal(SqlRowSet rowSet) {
         TimeBasedTotal total = new TimeBasedTotal();
-        total.setMonthName(rowSet.getString("monthname"));
+        total.setMonthName(rowSet.getDate("month").toLocalDate().getMonth().getDisplayName(TextStyle.FULL_STANDALONE, Locale.ENGLISH));
         total.setTotalExpenses(rowSet.getDouble("total_expenses"));
         return total;
     }

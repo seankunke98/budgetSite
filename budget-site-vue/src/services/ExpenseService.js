@@ -29,12 +29,6 @@ export default {
     getExpenseTypes() {
         return axios.get(`/expenses/expenseTypes`)
     },
-    getTypeTotals() {
-        return axios.get(`/expenses/expenseTypeTotals`)
-    },
-    getTypeNames() {
-        return axios.get(`/expenses/expenseTypeNames`)
-    },
     getLastMonthTotal() {
         return axios.get(`/expenses/expensesLastMonth`)
     },

@@ -108,6 +108,7 @@ public class ExpenseController {
     @RequestMapping(path = "/expenses/expensesFullYearWithMonth", method = RequestMethod.GET)
     public List<TimeBasedTotal> totalExpensesFullYearWithMonth(Principal principal) {
         int actualUserId = userDao.findIdByUsername(principal.getName());
+        System.out.println(expenseDao.totalsFullYearWithMonth(actualUserId));
         return expenseDao.totalsFullYearWithMonth(actualUserId);
     }
 

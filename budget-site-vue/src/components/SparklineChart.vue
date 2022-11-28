@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container fluid >
     <v-sparkline
     :fill="fill"
     :gradient="selectedGradient"
@@ -11,12 +11,13 @@
     stroke-linecap="round"
     color="purple"
     auto-draw
+    v-if="value.length > 1"
     >
 </v-sparkline>
     
     <v-divider></v-divider>
 
-    <v-row justify="center" align="center" class="pt-2">
+    <v-row justify="center" align="center" class="pt-2" v-if="value.length > 1">
     <v-col cols="3" offset="">
         <v-row justify="center" align="center" >
         <v-item-group v-model="selectedGradient" mandatory>
@@ -73,8 +74,9 @@
     </v-col>
     </v-row>
 
-    <v-divider></v-divider>
+    <v-alert type="info" text v-else>Expense totals per month will go here.</v-alert>
 
+    <v-divider></v-divider>
     <v-card-actions class="justify-center">
     <v-btn
         block
