@@ -8,6 +8,7 @@ import com.budgeting.newbudgetapp.dao.UserDao;
 import com.budgeting.newbudgetapp.model.Expense;
 import com.budgeting.newbudgetapp.model.TimeBasedTotal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class ExpenseController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/expenses/addExpense")
     public Expense addExpense(@Valid @RequestBody Expense expense, Principal principal) {
         jdbcExpenseDao.addExpense(expense);
@@ -55,6 +57,7 @@ public class ExpenseController {
     }
 
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/expenses/{expenseId}")
     public void deleteExpensesById(@Valid @PathVariable int expenseId) {
         jdbcExpenseDao.deleteExpense(expenseId);
@@ -73,6 +76,7 @@ public class ExpenseController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/expenses/deleteExpenses/deleteMultipleExpenses", method = RequestMethod.POST)
     public void deleteMultipleExpenses(@RequestBody Expense[] expenses) {
         for(Expense current : expenses) {

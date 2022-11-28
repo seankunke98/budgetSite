@@ -32,6 +32,12 @@
           inset
           vertical
         ></v-divider>
+        <v-alert v-model="createSuccess" type="success" class="mt-4" dense shaped text transition="fade-transition" >Expense added!</v-alert>
+        <v-alert v-model="createFailure" type="error" class="mt-4" dense shaped text transition="fade-transition">Failed to add expense, please try again.</v-alert>
+        <v-alert v-model="updateSuccess" type="success" class="mt-4" dense shaped text transition="fade-transition">Expense updated!</v-alert>
+        <v-alert v-model="updateFailure" type="error" class="mt-4" dense shaped text transition="fade-transition">Update failed, please try again.</v-alert>
+        <v-alert v-model="deleteSuccess" type="success" class="mt-4" dense shaped text transition="fade-transition">Expense(s) deleted!</v-alert>
+        <v-alert v-model="deleteFailure" type="error" class="mt-4" dense shaped text transition="fade-transition">Failed to delete expense(s), please try again.</v-alert>
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
@@ -192,6 +198,12 @@ import ExpenseService from '../services/ExpenseService'
       selectedType: '',
       dialogDelete: false,
       singleSelect: false,
+      createSuccess: false,
+      updateSuccess: false,
+      deleteSuccess: false,
+      deleteFailure: false,
+      updateFailure: false,
+      createFailure: false,
       headers: [
         {
           text: 'Expense Name',
@@ -271,17 +283,20 @@ import ExpenseService from '../services/ExpenseService'
       },
       deleteSelectedExpenses() {
         ExpenseService.deleteMultipleExpenses(this.selected).then((response) => {
-          if(response.status == 200) {
+          if(response.status == 204) {
             this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
-            console.log("Success")
+            this.deleteSuccess = true
+            setTimeout(() => this.deleteSuccess = false, 4000)
+          } else {
+            this.deleteFailure = true
+            setTimeout(() => this.deleteFailure = false, 4000)
           }
         })
-        this.tableExpenses = this.tableExpenses.filter(item => !this.selected.includes(item))
       },
       deleteSelectedIds() {
         this.selectedIds = this.selected.map(item => item.expenseId)
         ExpenseService.deleteMultipleExpenses(this.selectedIds).then((response) => {
-          if(response.status == 200) {
+          if(response.status == 204) {
             console.log("Success")
           }
         })
@@ -292,10 +307,14 @@ import ExpenseService from '../services/ExpenseService'
         this.dialogDelete = true
       },
       deleteItemConfirm () {
+        this.tableExpenses.splice(this.editedIndex, 1)
         ExpenseService.deleteExpensesById(this.editedExpense.expenseId).then((response) => {
-          if(response.status == 200) {
-            console.log(location)
-            this.tableExpenses.splice(this.editedIndex, 1)
+          if(response.status == 204) {
+            this.deleteSuccess = true
+            setTimeout(() => this.deleteSuccess = false, 4000)
+          } else {
+            this.deleteFailure = true
+            setTimeout(() => this.deleteFailure = false, 4000)
           }
         })
         this.closeDelete()
@@ -320,15 +339,23 @@ import ExpenseService from '../services/ExpenseService'
           this.tableExpenses.splice(this.editedIndex, 1, this.editedExpense)
           ExpenseService.editExpense(this.editedExpense).then((response) => {
             if(response.status == 200) {
-              console.log('Your expense has been updated.')
+              this.updateSuccess = true
+              setTimeout(() => this.updateSuccess = false, 4000)
+            } else {
+              this.updateFailure = false
+              setTimeout(() => this.updateFailure = true, 4000)
             }
           })
         } else {
           console.log(this.editedExpense)
           this.tableExpenses.unshift(this.editedExpense)
           ExpenseService.addExpense(this.editedExpense).then((response) => {
-            if(response.status == 200) {
-              console.log("Your expense has been added.")
+            if(response.status == 201) {
+              this.createSuccess = true
+              setTimeout(() => this.createSuccess = false, 4000)
+            } else {
+              this.createFailure = true
+              setTimeout(() => this.createFailure = false, 4000)
             }
           })
         }
