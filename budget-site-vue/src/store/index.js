@@ -32,6 +32,7 @@ export default new Vuex.Store({
     expenseTypes: allExpenseTypes || [],
     totalExpensesByType: [],
     totalExpensesByDate: [],
+    expenseLimits: []
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -85,6 +86,12 @@ export default new Vuex.Store({
     },
     SET_EXPENSE_DATE_TOTALS(state, data) {
       state.totalExpensesByDate = data;
+    },
+    SET_LIMITS(state, limits) {
+      state.expenseLimits = limits
+      let parsed = JSON.stringify(limits)
+      let parsedObj = JSON.parse(parsed);
+      sessionStorage.setItem('expenseLimits', JSON.stringify(parsedObj));
     }
   },
   getters: {
@@ -94,9 +101,6 @@ export default new Vuex.Store({
     expenseTypes: (state) => {
       return state.expenseTypes
     },
-    expense: (state) => {
-      return  state.expense
-    }
   },
   actions: {
     addExpenses({ commit }, expensesToAdd) {

@@ -20,15 +20,6 @@ export default {
     editExpense(expense) {
         return axios.put(`/expenses/editExpense`, expense)
     },
-    sumOfExpensesByType(typeId) {
-        return axios.get(`/expenses/totalExpenses/${typeId}`)
-    },
-    sumOfExpensesEachType() {
-        return axios.get(`/expenses/expenseTypes/allTypeTotals`)
-    },
-    getExpenseTypes() {
-        return axios.get(`/expenses/expenseTypes`)
-    },
     getLastMonthTotal() {
         return axios.get(`/expenses/expensesLastMonth`)
     },
@@ -43,7 +34,5 @@ export default {
     },
     commitExpenseChanges(tableExpenses) {
         return axios.post(`/expenses/addAllExpenses`, tableExpenses)
-    }
-
-
+    },
 }

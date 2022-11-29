@@ -6,56 +6,48 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ExpenseType {
 
     private int expenseTypeId;
-    private String expenseTypeName;
-
+    private String typeName;
     private double totalExpenses;
 
-    public ExpenseType(int expenseTypeId, String expenseTypeName) {
+    public ExpenseType(int expenseTypeId, String typeName) {
         this.expenseTypeId = expenseTypeId;
-        this.expenseTypeName = expenseTypeName;
+        this.typeName = typeName;
     }
-
-    public ExpenseType(int expenseTypeId, String expenseTypeName, double totalExpenses) {
+    public ExpenseType(int expenseTypeId, double totalExpenses) {
         this.expenseTypeId = expenseTypeId;
-        this.expenseTypeName = expenseTypeName;
-        this.totalExpenses = totalExpenses;
-    }
-
-    public ExpenseType(String expenseTypeName, double totalExpenses) {
-        this.expenseTypeName = expenseTypeName;
         this.totalExpenses = totalExpenses;
     }
 
     public ExpenseType() {
     }
 
+    public ExpenseType(String typeName, double totalExpenses) {
+        this.typeName = typeName;
+        this.totalExpenses = totalExpenses;
+    }
+
+    public double getTotalExpenses() {
+        return totalExpenses;
+    }
+
+    public void setTotalExpenses(double totalExpenses) {
+        this.totalExpenses = totalExpenses;
+    }
+
     public int getExpenseTypeId() {
         return expenseTypeId;
     }
 
-    public String getExpenseTypeName() {
-        return expenseTypeName;
+    public String getTypeName() {
+        return typeName;
     }
 
     public void setExpenseTypeId(int expenseTypeId) {
         this.expenseTypeId = expenseTypeId;
     }
 
-    public void setExpenseTypeName(String expenseTypeName) {
-        this.expenseTypeName = expenseTypeName;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
-    public double getTotalExpenses() {
-        double expenses = 0;
-        if(totalExpenses > 0) {
-            expenses = totalExpenses;
-        }
-        return expenses;
-    }
-
-    public void setTotalExpenses(double totalExpenses) {
-        if(totalExpenses > 0) {
-            this.totalExpenses = totalExpenses;
-        }
-    }
 }

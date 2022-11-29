@@ -11,9 +11,6 @@ public interface ExpenseTypeDao {
 
     List<ExpenseType> getExpenseTypes();
 
-    List<Double> typeTotals();
-
-
-
+    List<ExpenseType> totalsEachTypeCurrentMonth(int userId);
 
 }

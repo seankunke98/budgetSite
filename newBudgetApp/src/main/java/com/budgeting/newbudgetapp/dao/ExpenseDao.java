@@ -34,7 +34,4 @@ public interface ExpenseDao {
     void multipleExpenseInsert(List<Expense> expenses);
 
 
-
-
-
 }

@@ -13,8 +13,7 @@
 
 <script>
 
-import ExpenseService from '../services/ExpenseService'
-
+import ExpenseTypeService from "../services/ExpenseTypeService";
 export default {
   name: "DonutExample",
   data: () => ({
@@ -72,7 +71,7 @@ export default {
 
   methods: {
     getTotalsByType() {  
-      ExpenseService.sumOfExpensesEachType().then(response => {
+      ExpenseTypeService.sumOfExpensesEachType().then(response => {
         if(response.status == 200) {
           this.$store.commit("SET_EXPENSE_TYPE_TOTALS", response.data)
         }

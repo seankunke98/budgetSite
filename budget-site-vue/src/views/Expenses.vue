@@ -1,15 +1,24 @@
 <template>
-  <div>
+  <v-container>
     <expense-table />
-  </div>
+    <expense-limit-progress-vue />
+    <expense-limit-table-vue />
+    <expense-limit-form-vue />
+  </v-container>
 </template>
 
 <script>
 import ExpenseTable from '@/components/ExpenseTable.vue';
+import ExpenseLimitFormVue from '@/components/ExpenseLimitForm.vue';
+import ExpenseLimitTableVue from '@/components/ExpenseLimitTable.vue';
+import ExpenseLimitProgressVue from '@/components/ExpenseLimitProgress.vue';
 export default {
   name: "expenses-page",
   components: {
-    ExpenseTable
+    ExpenseTable,
+    ExpenseLimitFormVue,
+    ExpenseLimitTableVue,
+    ExpenseLimitProgressVue
   }
 }
 </script>
