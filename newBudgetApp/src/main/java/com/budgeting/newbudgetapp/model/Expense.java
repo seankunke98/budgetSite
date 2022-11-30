@@ -15,24 +15,24 @@ public class Expense {
 
     private int expenseTypeId;
 
-    private String expenseTypeName;
+    private String typeName;
 
     private LocalDate expenseDate;
 
-    public Expense(int expenseId, String expenseName, double expenseAmount, int expenseTypeId, String expenseTypeName, LocalDate expenseDate) {
+    public Expense(int expenseId, String expenseName, double expenseAmount, int expenseTypeId, String typeName, LocalDate expenseDate) {
         this.expenseId = expenseId;
         this.expenseName = expenseName;
         this.expenseAmount = expenseAmount;
         this.expenseTypeId = expenseTypeId;
-        this.expenseTypeName = expenseTypeName;
+        this.typeName = typeName;
         this.expenseDate = expenseDate;
     }
 
     public Expense() {
     }
 
-    public String getExpenseTypeName() {
-        return expenseTypeName;
+    public String getTypeName() {
+        return typeName;
     }
 
     public LocalDate getExpenseDate() {
@@ -43,8 +43,8 @@ public class Expense {
         this.expenseDate = expenseDate;
     }
 
-    public void setExpenseTypeName(String expenseTypeName) {
-        this.expenseTypeName = expenseTypeName;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     public int getExpenseId() {
@@ -86,7 +86,7 @@ public class Expense {
                 ", expenseName='" + expenseName + '\'' +
                 ", expenseAmount=" + expenseAmount +
                 ", expenseTypeId=" + expenseTypeId +
-                ", expenseTypeName='" + expenseTypeName + '\'' +
+                ", expenseTypeName='" + typeName + '\'' +
                 ", expenseDate=" + expenseDate +
                 '}';
     }

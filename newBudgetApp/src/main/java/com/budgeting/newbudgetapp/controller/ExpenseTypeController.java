@@ -8,10 +8,7 @@ import com.budgeting.newbudgetapp.model.ExpenseType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -76,11 +73,17 @@ public class ExpenseTypeController {
         List<ExpenseType> expenseTypeTotals = jdbcExpenseTypeDao.totalExpensesEachType(actualUserId);
         if(actualUserId == userDao.findIdByUsername(principal.getName())) {
             for(ExpenseType current : expenseTypeTotals) {
-                names.add(current.getExpenseTypeName());
+                names.add(current.getTypeName());
             }
             Collections.sort(names);
         }
         return names;
+    }
+
+    @RequestMapping(path = "/expenses/expensesCurrentMonthByType", method = RequestMethod.GET)
+    public List<ExpenseType> totalExpensesCurrentMonthByType(Principal principal) {
+        int userId = userDao.findIdByUsername(principal.getName());
+        return expenseTypeDao.totalsEachTypeCurrentMonth(userId);
     }
 
 

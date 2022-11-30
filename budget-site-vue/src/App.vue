@@ -16,7 +16,7 @@
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
-      absolute
+      app
       temporary
       dark
     >

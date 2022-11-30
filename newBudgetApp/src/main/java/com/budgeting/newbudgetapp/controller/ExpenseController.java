@@ -16,7 +16,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin
@@ -109,6 +108,7 @@ public class ExpenseController {
     @RequestMapping(path = "/expenses/expensesFullYearWithMonth", method = RequestMethod.GET)
     public List<TimeBasedTotal> totalExpensesFullYearWithMonth(Principal principal) {
         int actualUserId = userDao.findIdByUsername(principal.getName());
+        System.out.println(expenseDao.totalsFullYearWithMonth(actualUserId));
         return expenseDao.totalsFullYearWithMonth(actualUserId);
     }
 
