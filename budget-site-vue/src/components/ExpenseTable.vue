@@ -7,7 +7,7 @@
     :items="tableExpenses"
     :single-select="singleSelect"
     item-key="expenseId"
-    sort-by="name"
+    sort-by="expenseDate"
     show-select
     class="elevation-1"
     :loading="loading"
