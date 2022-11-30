@@ -1,19 +1,21 @@
 package com.budgeting.newbudgetapp.model;
 
 public class ExpenseLimit {
+    private int expenseLimitId;
     private String typeName;
     private double expenseLimit;
     private double totalExpenses;
 
-    public ExpenseLimit(String typeName, double expenseLimit, double totalExpenses) {
-        this.typeName = typeName;
+    public ExpenseLimit(int expenseLimitId, double expenseLimit, double totalExpenses) {
+        this.expenseLimitId = expenseLimitId;
         this.expenseLimit = expenseLimit;
         this.totalExpenses = totalExpenses;
     }
 
-    public ExpenseLimit(String typeName, double expenseLimit) {
-        this.typeName = typeName;
+    public ExpenseLimit(int expenseLimitId, String typeName, double expenseLimit) {
+        this.expenseLimitId = expenseLimitId;
         this.expenseLimit = expenseLimit;
+        this.typeName = typeName;
     }
 
     public ExpenseLimit() {
@@ -25,6 +27,14 @@ public class ExpenseLimit {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public int getExpenseLimitId() {
+        return expenseLimitId;
+    }
+
+    public void setExpenseLimitId(int expenseLimitId) {
+        this.expenseLimitId = expenseLimitId;
     }
 
     public double getExpenseLimit() {

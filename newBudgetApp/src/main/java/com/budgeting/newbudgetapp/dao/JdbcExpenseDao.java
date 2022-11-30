@@ -28,7 +28,7 @@ public class JdbcExpenseDao implements ExpenseDao {
 
     @Override
     public void addUserExpense(int userId, int expenseId) {
-        String sql = "INSERT INTO user_expense (user_id, expense_id) VALUES ((select user_id from users where users.user_id = ?), ?)";
+        String sql = "INSERT INTO user_expenses (user_id, expense_id) VALUES ((select user_id from users where users.user_id = ?), ?)";
         jdbcTemplate.update(sql, userId, expenseId);
     }
 
@@ -97,7 +97,7 @@ public class JdbcExpenseDao implements ExpenseDao {
         List<TimeBasedTotal> totals = new ArrayList<>();
         String sql = "SELECT date_trunc('month', expense_date)::date as month,\n" +
                 "                sum(expense_amount) AS total_expenses\n" +
-                "                FROM (SELECT expenses.expense_amount, expense_date FROM expenses join user_expense ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.type_name = et.type_name\n" +
+                "                FROM (SELECT expenses.expense_amount, expense_date FROM expenses join user_expenses ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.type_name = et.type_name\n" +
                 "                             where user_id = ?) as user_expenses\n" +
                 "                WHERE expense_date >= '2022-01-01' AND expense_date <= '2022-12-01'\n" +
                 "                GROUP BY month\n" +
@@ -140,7 +140,7 @@ public class JdbcExpenseDao implements ExpenseDao {
     @Override
     public double totalExpenses(int userId) {
         double totalExpenses = 0;
-        String sql = "select sum(expense_amount) as total_expenses from expenses join user_expense on expenses.expense_id = user_expense.expense_id where user_id = ?";
+        String sql = "select sum(expense_amount) as total_expenses from expenses join user_expenses on expenses.expense_id = user_expenses.expense_id where user_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
         if(rowSet.next()) {
             totalExpenses = rowSet.getDouble("total_expenses");
@@ -189,7 +189,7 @@ public class JdbcExpenseDao implements ExpenseDao {
     @Override
     public List<Expense> getExpensesByUserId(int userId) {
         List<Expense> expenses = new ArrayList<>();
-        String sql = "SELECT expenses.expense_id, expenses.expense_amount, expenses.expense_name, expenses.type_name, expense_date FROM expenses join user_expense ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.type_name = et.type_name \n"
+        String sql = "SELECT expenses.expense_id, expenses.expense_amount, expenses.expense_name, expenses.type_name, expense_date FROM expenses join user_expenses ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.type_name = et.type_name \n"
                 + "where user_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
         while(rowSet.next()) {

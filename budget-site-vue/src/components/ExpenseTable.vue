@@ -86,11 +86,11 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="fit-content">
             <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" @click.prevent="initialize"> Reset </v-btn>
+              <v-divider class="mx-4" inset vertical></v-divider>
               <v-btn color="primary" @click.prevent="deleteSelectedExpenses">
                 Delete Selected
               </v-btn>
-              <v-divider class="mx-4" inset vertical></v-divider>
-              <v-btn color="primary" @click.prevent="initialize"> Reset </v-btn>
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-btn color="primary" dark v-bind="attrs" v-on="on">
                 New Expense
@@ -247,6 +247,9 @@ export default {
   },
   created() {
     this.initialize(), this.setExpenseTypes();
+  },
+  mounted() {
+
   },
   updated() {},
   methods: {

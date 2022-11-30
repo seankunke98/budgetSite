@@ -25,7 +25,7 @@ public class JdbcExpenseTypeDao implements ExpenseTypeDao {
     @Override
     public List<ExpenseType> totalExpensesEachType(int userId) throws JsonProcessingException {
         List<ExpenseType> totalExpenses = new ArrayList<>();
-        String sql = "select sum(expense_amount) as total_expenses, type_name from (SELECT expenses.expense_amount, expenses.type_name FROM expenses join user_expense ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.type_name = et.type_name \n"
+        String sql = "select sum(expense_amount) as total_expenses, type_name from (SELECT expenses.expense_amount, expenses.type_name FROM expenses join user_expenses ue on expenses.expense_id = ue.expense_id inner join expense_types et on expenses.type_name = et.type_name \n"
                 + "where user_id = ?) as user_expenses group by type_name";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
 
@@ -51,7 +51,7 @@ public class JdbcExpenseTypeDao implements ExpenseTypeDao {
         List<ExpenseType> totalForCurrentMonth = new ArrayList<>();
         LocalDate start = LocalDate.now().withDayOfMonth(1);
         LocalDate end = setEndDate();
-        String sql = "select type_name, sum(expense_amount) as total_expenses from expenses join user_expense ue on expenses.expense_id = ue.expense_id where expense_date between '" + start + "' AND '" + end + "' and user_id = ? group by type_name";
+        String sql = "select type_name, sum(expense_amount) as total_expenses from expenses join user_expenses ue on expenses.expense_id = ue.expense_id where expense_date between '" + start + "' AND '" + end + "' and user_id = ? group by type_name";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
         while(rowSet.next()) {
             totalForCurrentMonth.add(mapRowToExpenseTypeTotal(rowSet));

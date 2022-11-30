@@ -79,7 +79,7 @@ export default {
         this.series.push(this.$store.state.totalExpensesByType[i].totalExpenses);
       }
         for (let i = 0; i < this.$store.state.totalExpensesByType.length; i++) {
-        this.chartOptions.labels.push(this.$store.state.totalExpensesByType[i].expenseTypeName);
+        this.chartOptions.labels.push(this.$store.state.totalExpensesByType[i].typeName);
       }
       })
         this.loading = false;
