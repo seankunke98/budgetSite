@@ -2,7 +2,7 @@
 <v-card class="mb-10">
     <v-progress-linear
         
-        v-model="medicalProgress"
+        value="medicalProgress"
         color="red"
         height="25"
     >
@@ -12,7 +12,7 @@
     </v-progress-linear>
     <br>
     <v-progress-linear
-        v-model="homeProgress"
+        value="homeProgress"
         color="green"
         height="25"
     >
@@ -22,7 +22,7 @@
     </v-progress-linear>
     <br>
     <v-progress-linear
-        v-model="automotiveProgress"
+        value="automotiveProgress"
         color="blue"
         height="25"
     >
@@ -32,7 +32,7 @@
     </v-progress-linear>
     <br>
     <v-progress-linear
-        v-model="groceryProgress"
+        value="groceryProgress"
         color="purple"
         height="25"
     >
@@ -46,9 +46,6 @@
         color="orange"
         height="25"
     >
-        <template v-slot:default="{ value }">
-            <strong>{{ value }}%</strong>
-        </template>
     </v-progress-linear>
     <br>
     <v-progress-linear
