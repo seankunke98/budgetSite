@@ -4,9 +4,8 @@
       id="expense-table"
       :headers="headers"
       :items="tableExpenses"
-      :single-select="singleSelect"
+      :single-select="true"
       item-key="expenseId"
-      sort-by="name"
       show-select
       class="elevation-1"
       :loading="loading"
@@ -16,12 +15,6 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>My Expenses</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <v-switch
-            v-model="singleSelect"
-            label="Single select"
-            class="pt-5"
-          ></v-switch>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-alert
             v-model="createSuccess"
@@ -175,10 +168,15 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:body>
+      <template v-slot:[`item.data-table-select`]="{item}">
+        <v-simple-checkbox
+          v-model="item.expenseId"
+        ></v-simple-checkbox>
+      </template>
+      <template v-slot:body="{items}">
             <tbody>
-                <tr v-for="item in tableExpenses" :key="item.expenseId">
-                  <v-checkbox></v-checkbox>
+                <tr v-for="item in items" :key="item.expenseId">
+                  <v-checkbox v-model="selected" :value="item" style="padding-left: 15px" />
                     <td>{{ item.expenseName }}</td>
                     <td>${{ item.expenseAmount }}</td>
                     <td>{{ item.typeName }}</td>
