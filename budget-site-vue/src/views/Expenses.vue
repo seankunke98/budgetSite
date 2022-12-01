@@ -1,22 +1,29 @@
 <template>
   <v-container>
     <expense-table />
+    <v-card class="d-flex flex-row-reverse justify-space-between">
+      <v-row no-gutters style="flex-wrap: nowrap;">
+        <v-col>
     <expense-limit-progress-vue />
+  </v-col>
+  </v-row>
+  <v-row no-gutters style="flex-wrap: nowrap;">
+    <v-col>
     <expense-limit-table-vue />
-    <expense-limit-form-vue />
+  </v-col>
+  </v-row>
+  </v-card>
   </v-container>
 </template>
 
 <script>
 import ExpenseTable from '@/components/ExpenseTable.vue';
-import ExpenseLimitFormVue from '@/components/ExpenseLimitForm.vue';
 import ExpenseLimitTableVue from '@/components/ExpenseLimitTable.vue';
 import ExpenseLimitProgressVue from '@/components/ExpenseLimitProgress.vue';
 export default {
   name: "expenses-page",
   components: {
     ExpenseTable,
-    ExpenseLimitFormVue,
     ExpenseLimitTableVue,
     ExpenseLimitProgressVue
   }

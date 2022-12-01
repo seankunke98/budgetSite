@@ -86,11 +86,11 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="fit-content">
             <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" @click.prevent="initialize"> Reset </v-btn>
+              <v-divider class="mx-4" inset vertical></v-divider>
               <v-btn color="primary" @click.prevent="deleteSelectedExpenses">
                 Delete Selected
               </v-btn>
-              <v-divider class="mx-4" inset vertical></v-divider>
-              <v-btn color="primary" @click.prevent="initialize"> Reset </v-btn>
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-btn color="primary" dark v-bind="attrs" v-on="on">
                 New Expense
@@ -175,6 +175,23 @@
           </v-dialog>
         </v-toolbar>
       </template>
+      <template v-slot:body>
+            <tbody>
+                <tr v-for="item in tableExpenses" :key="item.expenseId">
+                  <v-checkbox></v-checkbox>
+                    <td>{{ item.expenseName }}</td>
+                    <td>${{ item.expenseAmount }}</td>
+                    <td>{{ item.typeName }}</td>
+                    <td>{{ item.expenseDate }}</td>
+                    <td>
+                    <v-icon small class="mr-2" @click="editItem(item)">
+                    mdi-pencil
+                    </v-icon>
+                    <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+                    </td>
+                </tr>
+            </tbody>
+            </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click.prevent="editItem(item)">
           mdi-pencil
@@ -247,6 +264,9 @@ export default {
   },
   created() {
     this.initialize(), this.setExpenseTypes();
+  },
+  mounted() {
+
   },
   updated() {},
   methods: {

@@ -121,14 +121,5 @@ public class ExpenseController {
         }
     }
 
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-//    @RequestMapping(value = "/expenses", method = RequestMethod.POST)
-//    public void deleteSelectedExpenses(@RequestBody Expense[] expenses) {
-//        for(Expense current : expenses) {
-//            int expenseId = current.getExpenseId();
-//            expenseDao.deleteExpense(expenseId);
-//        }
-//    }
-
 
 }
