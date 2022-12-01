@@ -175,6 +175,23 @@
           </v-dialog>
         </v-toolbar>
       </template>
+      <template v-slot:body>
+            <tbody>
+                <tr v-for="item in tableExpenses" :key="item.expenseId">
+                  <v-checkbox></v-checkbox>
+                    <td>{{ item.expenseName }}</td>
+                    <td>${{ item.expenseAmount }}</td>
+                    <td>{{ item.typeName }}</td>
+                    <td>{{ item.expenseDate }}</td>
+                    <td>
+                    <v-icon small class="mr-2" @click="editItem(item)">
+                    mdi-pencil
+                    </v-icon>
+                    <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+                    </td>
+                </tr>
+            </tbody>
+            </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click.prevent="editItem(item)">
           mdi-pencil
