@@ -1,39 +1,37 @@
 <template>
   <v-container>
+    <v-card class="d-flex flex-row-reverse justify-space-between" flat>
+    <v-row >
+      <v-col xl="12" lg="12" md="12" sm="12">
     <expense-table />
-    <v-card class="d-flex flex-row-reverse justify-space-between">
-      <v-row no-gutters style="flex-wrap: nowrap;">
-        <v-col>
+  </v-col>
+        <v-col xl="6" lg="4" md="3" sm="2">
     <expense-limit-progress-vue />
   </v-col>
-  </v-row>
-  <v-row no-gutters style="flex-wrap: nowrap;">
-    <v-col>
+    <v-col xl="6" lg="4" md="3" sm="2">
     <expense-limit-table-vue />
   </v-col>
-  </v-row>
-  </v-card>
+</v-row>
+</v-card>
   </v-container>
 </template>
 
 <script>
-import ExpenseTable from '@/components/ExpenseTable.vue';
-import ExpenseLimitTableVue from '@/components/ExpenseLimitTable.vue';
-import ExpenseLimitProgressVue from '@/components/ExpenseLimitProgress.vue';
+import ExpenseTable from "@/components/ExpenseTable.vue";
+import ExpenseLimitTableVue from "@/components/ExpenseLimitTable.vue";
+import ExpenseLimitProgressVue from "@/components/ExpenseLimitProgress.vue";
 export default {
   name: "expenses-page",
   components: {
     ExpenseTable,
     ExpenseLimitTableVue,
-    ExpenseLimitProgressVue
-  }
-}
+    ExpenseLimitProgressVue,
+  },
+};
 </script>
 
 
 <style scoped>
-
-
 div#expenses-main {
   background-image: linear-gradient(to right, #2c3e50, #4ca1af);
   height: 100%;

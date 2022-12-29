@@ -5,25 +5,31 @@
       <div class="alert alert-danger" role="alert" v-if="registrationErrors">
         {{ registrationErrorMsg }}
       </div>
-      <label for="username" class="sr-only"></label>
+      <ValidationProvider rules="required|min:8|max:25" v-slot="{ errors }">
       <input
         type="text"
         id="username"
         class="form-control"
         placeholder="Username"
         v-model="user.username"
-        required
         autofocus
       />
-      <label for="password" class="sr-only"></label>
+      <br />
+      <span>{{errors[0]}}</span>
+    </ValidationProvider>
+      <ValidationObserver>
+      <ValidationProvider name="pass" rules="required|min:10|max:25" v-slot="{ errors }">
       <input
         type="password"
         id="password"
         class="form-control"
         placeholder="Password"
         v-model="user.password"
-        required
       />
+      <br />
+      <span>{{errors[0]}}</span>
+    </ValidationProvider>
+    <ValidationProvider rules="required|password:@pass|min:10|max:25" v-slot="{ errors }">
       <input
         type="password"
         id="confirmPassword"
@@ -32,6 +38,10 @@
         v-model="user.confirmPassword"
         required
       />
+      <br />
+      <span>{{errors[0]}}</span>
+    </ValidationProvider>
+  </ValidationObserver>
       <button class="btn btn-lg btn-primary btn-block" type="submit">
         Create Account
       </button>
@@ -45,6 +55,33 @@
 
 <script>
 import authService from "../services/AuthService";
+import { extend } from 'vee-validate';
+
+extend('password', {
+  params: ['target'],
+  validate(value, { target }) {
+    return value === target;
+  },
+  message: 'Password confirmation does not match'
+});
+
+extend('nameLength', { validate(username, {min, max}) {
+    const length = username.length
+    if(length >= min && length <= max) {
+        return true
+    }
+    return 'Username must be at least 10 characters and at most 25.'
+},
+params: ['min', 'max']
+});
+
+extend('min', confirmPassword => {
+    const length = confirmPassword.length
+    if(length >= 10) {
+        return true
+    }
+    return 'Password must be at least 10 characters and at most 25.'
+});
 
 export default {
   name: "register-page",
@@ -64,7 +101,7 @@ export default {
     register() {
       if (this.user.password != this.user.confirmPassword) {
         this.registrationErrors = true;
-        this.registrationErrorMsg = "Password & Confirm Password do not match.";
+        this.registrationErrorMsg = "Error Registering User";
       } else {
         authService
           .register(this.user)

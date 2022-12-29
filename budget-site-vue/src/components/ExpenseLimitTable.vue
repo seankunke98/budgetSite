@@ -1,13 +1,14 @@
 <template>
-    <v-card class="mb-10" elevation="6">
+    <v-card class="mb-10 mt-3" elevation="6" width="900">
         <v-data-table
         :headers="headers"
-        :items="limits"
+        :items="(limitsWithTotals.length >= 1)?limitsWithTotals:limits"
         :loading="loading"
         :options.sync="options"
         item-key="expenseLimitId"
         sort-by="name"
         class="elevation-1"
+        
         >
             <template v-slot:top>
                 <v-toolbar flat>
@@ -16,8 +17,7 @@
                     <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="fit-content">
                         <template v-slot:activator="{ on, attrs }">
-                        <v-divider class="mx-4" inset vertical></v-divider>
-                        <v-btn color="primary" @click.prevent="initialize"> Reset </v-btn>
+                        <v-btn color="primary" @click.prevent="initialize(); getLimitsWithTotals();"> Refresh </v-btn>
                         <v-divider class="mx-4" inset vertical></v-divider>
                         <v-btn color="primary" dark v-bind="attrs" v-on="on">
                         Set New Expense Limit
@@ -34,7 +34,7 @@
                             <v-col cols="12" sm="6" md="4">
                             <v-select
                             v-model="editedItem.typeName"
-                            :items="remainingOptions"
+                            :items="(formTitle === 'Edit Item')?expenseTypeOptions:remainingOptions"
                             label="Expense Type"
                             :item-value="'typeName'"
                             :item-text="'typeName'"
@@ -78,20 +78,7 @@
             </v-toolbar>
         </template>
         <template v-slot:body>
-            <tbody v-if="limits.length < 1">
-                <tr v-for="item in expenseTypeOptions" :key="item.typeName">
-                    <td>{{ item.typeName }}</td>
-                    <td>${{ item.totalExpenses }}</td>
-                    <td>${{ item.expenseLimit }}</td>
-                    <td>
-                    <v-icon small class="mr-2" @click="editItem(item)">
-                    mdi-pencil
-                    </v-icon>
-                    <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-            </td>
-            </tr>
-            </tbody>
-            <tbody v-else>
+            <tbody v-if="limitsWithTotals.length == 0">
                 <tr v-for="item in limits" :key="item.typeName">
                     <td>{{ item.typeName }}</td>
                     <td>${{ item.totalExpenses }}</td>
@@ -100,7 +87,20 @@
                     <v-icon small class="mr-2" @click="editItem(item)">
                     mdi-pencil
                     </v-icon>
-                    <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+                    <v-icon small @click="deleteItem(item); setAvailableExpenseTypes();"> mdi-delete </v-icon>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody v-else>
+                <tr v-for="item in limitsWithTotals" :key="item.typeName">
+                    <td>{{ item.typeName }}</td>
+                    <td>${{ item.totalExpenses }}</td>
+                    <td>${{ item.expenseLimit }}</td>
+                    <td>
+                    <v-icon small class="mr-2" @click="editItem(item)">
+                    mdi-pencil
+                    </v-icon>
+                    <v-icon small @click="deleteItem(item); setAvailableExpenseTypes();"> mdi-delete </v-icon>
                     </td>
                 </tr>
             </tbody>
@@ -110,7 +110,7 @@
                 <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
             </template>
             <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize"> Reset </v-btn>
+                <v-btn color="primary" @click="initialize(); getLimitsWithTotals();"> Refresh </v-btn>
             </template>
         </v-data-table>
     </v-card>
@@ -138,16 +138,20 @@ export default {
         expenseTypeOptions: [],
         remainingOptions: [],
         limits: [],
+        limitsWithTotals: [],
         editedIndex: -1,
         loading: false,
         editedItem: {
             expenseLimitId: "",
             typeName: "",
+            typeId: "",
             expenseLimit: "",
+            totalExpenses: ""
         },
         defaultItem: {
             typeName: "",
             expenseLimit: "",
+            totalExpenses: ""
         },
     }),
     computed: {
@@ -166,28 +170,34 @@ export default {
     created() {
         this.initialize();
         this.setExpenseTypes();
+        this.getLimitsWithTotals();
     },
     mounted() {
         this.setAvailableExpenseTypes();
     },
     methods: {
         initialize() {
-        ExpenseLimitService.getExpenseLimits().then((response) => {
-            if (response.status == 200) {
-                console.log(response.data);
-                this.limits = response.data;
+            ExpenseLimitService.getExpenseLimits().then((response) => {
+            if(response.status == 200) {
+                this.limits = response.data
             }
-            });
+            
+        })
+        },
+        getLimitsWithTotals() {
+            ExpenseLimitService.getExpenseLimitsWithTotals().then((response) => {
+                if(response.status == 200) {
+                    console.log(response.data)
+                    this.limitsWithTotals = response.data
+                }
+            })
         },
         setExpenseTypes() {
-            for (let i = 0; i < this.$store.state.expenseTypes.length; i++) {
-                this.expenseTypeOptions.push(this.$store.state.expenseTypes[i]);
-            }
+            this.expenseTypeOptions = this.$store.state.expenseTypes;
         },
         setAvailableExpenseTypes() {
             ExpenseLimitService.getAvailableExpenseTypes().then((response) => {
                 if(response.status == 200) {
-                    console.log(response.data);
                     this.remainingOptions = response.data
                 }
             })
@@ -232,12 +242,17 @@ export default {
 
         save() {
             if (this.editedIndex > -1) {
-                Object.assign(this.limits[this.editedIndex], this.editedItem);
+                this.limits.splice(this.editedIndex, 1, this.editedItem);
+                ExpenseLimitService.updateExpenseLimit(this.editedItem).then((response) => {
+                    if(response.status == 200) {
+                        console.log('Successfully edited')
+                    }
+                })
             } else {
-                this.limits.push(this.editedItem);
-                ExpenseLimitService.setExpenseLimits(this.editedItem).then((response) => {
+                this.limits.unshift(this.editedItem);
+                ExpenseLimitService.addExpenseLimits(this.editedItem).then((response) => {
                     if (response.status == 200) {
-                        console.log(response.data);
+                        console.log('Successfully saved');
                         }
                     }
                 );

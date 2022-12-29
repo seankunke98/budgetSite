@@ -9,6 +9,7 @@ Vue.use(Vuex)
 const currentToken = localStorage.getItem('token')
 const currentUser = JSON.parse(localStorage.getItem('user'))
 const currentUserExpenses = JSON.parse(sessionStorage.getItem('expenses'))
+const currentUserLimits = JSON.parse(sessionStorage.getItem('expenseLimits'))
 const allExpenseTypes = JSON.parse(sessionStorage.getItem('expenseTypes'))
 
 
@@ -32,7 +33,7 @@ export default new Vuex.Store({
     expenseTypes: allExpenseTypes || [],
     totalExpensesByType: [],
     totalExpensesByDate: [],
-    expenseLimits: []
+    expenseLimits: currentUserLimits || []
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -51,10 +52,11 @@ export default new Vuex.Store({
       sessionStorage.setItem('expenseTypes', JSON.stringify(parsedObj));
     },
     LOGOUT(state) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
       localStorage.removeItem('expenses')
       localStorage.removeItem('expenseTypes')
+      localStorage.removeItem('expenseLimits')
       state.token = '';
       state.user = {};
       axios.defaults.headers.common = {};
@@ -115,3 +117,33 @@ export default new Vuex.Store({
   },
   strict: true
 })
+
+// { 
+//   medicalProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// },
+//   homeProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// },
+//   automotiveProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// },
+//   groceryProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// },
+//   takeoutProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// },
+//   entertainmentProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// },
+//   totalProgress: {
+//     expenseLimit: 0,
+//     totalExpenses: 0
+// } }

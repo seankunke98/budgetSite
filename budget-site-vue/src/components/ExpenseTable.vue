@@ -4,13 +4,10 @@
       id="expense-table"
       :headers="headers"
       :items="tableExpenses"
-      :single-select="true"
       item-key="expenseId"
-      show-select
       class="elevation-1"
       :loading="loading"
       :options.sync="options"
-      v-model="selected"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -79,11 +76,11 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="fit-content">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" @click.prevent="initialize"> Reset </v-btn>
+              <v-btn color="primary" @click.prevent="initialize"> Refresh </v-btn>
               <v-divider class="mx-4" inset vertical></v-divider>
-              <v-btn color="primary" @click.prevent="deleteSelectedExpenses">
+              <!-- <v-btn color="primary" @click.prevent="deleteSelectedExpenses">
                 Delete Selected
-              </v-btn>
+              </v-btn> -->
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-btn color="primary" dark v-bind="attrs" v-on="on">
                 New Expense
@@ -168,15 +165,15 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.data-table-select`]="{item}">
+      <!-- <template v-slot:[`item.data-table-select`]="{item}">
         <v-simple-checkbox
           v-model="item.expenseId"
         ></v-simple-checkbox>
-      </template>
+      </template> -->
       <template v-slot:body="{items}">
             <tbody>
                 <tr v-for="item in items" :key="item.expenseId">
-                  <v-checkbox v-model="selected" :value="item" style="padding-left: 15px" />
+                  <!-- <v-checkbox v-model="selected" :value="item" style="padding-left: 15px" /> -->
                     <td>{{ item.expenseName }}</td>
                     <td>${{ item.expenseAmount }}</td>
                     <td>{{ item.typeName }}</td>
@@ -210,10 +207,7 @@ export default {
     tableExpenses: [],
     dialog: false,
     expenseTypeOptions: [],
-    selected: [],
-    selectedType: "",
     dialogDelete: false,
-    singleSelect: false,
     createSuccess: false,
     updateSuccess: false,
     deleteSuccess: false,
@@ -298,34 +292,33 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.tableExpenses.indexOf(item);
-      console.log(item);
       this.editedExpense = Object.assign({}, item);
       this.dialog = true;
     },
-    deleteSelectedExpenses() {
-      ExpenseService.deleteMultipleExpenses(this.selected).then((response) => {
-        if (response.status == 204) {
-          this.tableExpenses = this.tableExpenses.filter(
-            (item) => !this.selected.includes(item)
-          );
-          this.deleteSuccess = true;
-          setTimeout(() => (this.deleteSuccess = false), 4000);
-        } else {
-          this.deleteFailure = true;
-          setTimeout(() => (this.deleteFailure = false), 4000);
-        }
-      });
-    },
-    deleteSelectedIds() {
-      this.selectedIds = this.selected.map((item) => item.expenseId);
-      ExpenseService.deleteMultipleExpenses(this.selectedIds).then(
-        (response) => {
-          if (response.status == 204) {
-            console.log("Success");
-          }
-        }
-      );
-    },
+    // deleteSelectedExpenses() {
+    //   ExpenseService.deleteMultipleExpenses(this.selected).then((response) => {
+    //     if (response.status == 204) {
+    //       this.tableExpenses = this.tableExpenses.filter(
+    //         (item) => !this.selected.includes(item)
+    //       );
+    //       this.deleteSuccess = true;
+    //       setTimeout(() => (this.deleteSuccess = false), 4000);
+    //     } else {
+    //       this.deleteFailure = true;
+    //       setTimeout(() => (this.deleteFailure = false), 4000);
+    //     }
+    //   });
+    // },
+    // deleteSelectedIds() {
+    //   this.selectedIds = this.selected.map((item) => item.expenseId);
+    //   ExpenseService.deleteMultipleExpenses(this.selectedIds).then(
+    //     (response) => {
+    //       if (response.status == 204) {
+    //         console.log("Success");
+    //       }
+    //     }
+    //   );
+    // },
     deleteItem(item) {
       this.editedIndex = this.tableExpenses.indexOf(item);
       this.editedExpense = Object.assign({}, item);

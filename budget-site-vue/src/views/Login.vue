@@ -6,7 +6,7 @@
     <div id="site-info" class="site-info">
       <div class="information" id="information">
         <p id="description" class="description">
-          This project is a personal budget tracking platform that is currently still in progress but has limited features available.
+          This project is a personal budget tracking platform that is currently still in progress and has limited features available.
           Thank you for visiting!
         </p>
       </div>

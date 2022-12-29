@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default {
-    setExpenseLimits(expenseLimit) {
+    addExpenseLimits(expenseLimit) {
         return axios.post(`/expenseLimits/setExpenseLimit`, expenseLimit)
     },
     getExpenseLimits() {
@@ -12,5 +12,14 @@ export default {
     },
     getAvailableExpenseTypes() {
         return axios.get(`/expenseLimits/availableTypes`)
-    }
+    },
+    updateExpenseLimit(expenseLimit) {
+        return axios.put(`/expenseLimits/updateExpenseLimit`, expenseLimit)
+    },
+    getExpenseLimitsWithTotals() {
+        return axios.get(`/expenseLimits/getExpenseLimitsWithTotals`)
+    },
+    getExpenseLimitProgress() {
+        return axios.get(`/expenseLimits/getExpenseLimitProgress`)
+    },
 }
