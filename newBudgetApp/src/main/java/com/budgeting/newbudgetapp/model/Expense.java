@@ -3,6 +3,8 @@ package com.budgeting.newbudgetapp.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = ExpenseTypeFilter.class)
 public class Expense {
@@ -60,6 +62,8 @@ public class Expense {
     }
 
     public void setExpenseName(String expenseName) {
+        List<?> mixed = new ArrayList<>();
+        mixed.
         this.expenseName = expenseName;
     }
 

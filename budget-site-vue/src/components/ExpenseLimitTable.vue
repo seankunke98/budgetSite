@@ -175,6 +175,9 @@ export default {
     mounted() {
         this.setAvailableExpenseTypes();
     },
+    // beforeUpdate() {
+    //     this.getLimitsWithTotals()
+    // },
     methods: {
         initialize() {
             ExpenseLimitService.getExpenseLimits().then((response) => {
